@@ -117,7 +117,7 @@
 
 <body>
   <h1>For The Boys </h1>
-<p>Manchi videos collect chesi ikkada pettina bro's, Chudandi and download option kuda ichina guys! (By Nandhu)</p>
+<p>Manchi videos collect chesi ikkada pettina bro's, Chudandi and download option kuda ichina guys!</p>
   <div class="controls">
     <button onclick="setView('grid')">Grid View</button>
     <button onclick="setView('list')">List View</button>
@@ -175,7 +175,6 @@
       player.src = video.url;
       downloadBtn.href = video.url;
       nowPlaying.textContent = `Now Playing: ${video.title}`;
-      player.play();
       
       if (updateUrl) {
         const encodedUrl = encodeURIComponent(video.url);
