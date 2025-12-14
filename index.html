@@ -53,7 +53,9 @@
       background: var(--primary);
       color: #000;
     }
-    
+    p{
+      line-height: 1.8rem;
+    }
     .player-card {
       background: var(--card-bg);
       padding: 12px;
@@ -114,7 +116,8 @@
 </head>
 
 <body>
-  <h1>Tsunade </h1>
+  <h1>For The Boys </h1>
+<p>Manchi videos collect chesi ikkada pettina bro's, Chudandi and download option kuda ichina guys! (By Nandhu)</p>
   <div class="controls">
     <button onclick="setView('grid')">Grid View</button>
     <button onclick="setView('list')">List View</button>
@@ -136,19 +139,15 @@
   <script>
     /* ================= CONFIG ================= */
     const videos = [
-    {
-      title: 'Video 1',
-      url: 'https://archive.org/download/myvideos/video1.mp4'
-    },
-    {
-      title: 'Video 2',
-      url: 'https://archive.org/download/myvideos/video2.mp4'
-    },
-    {
-      title: 'Video 3',
-      url: 'https://archive.org/download/myvideos/video3.mp4'
-    }];
-    
+      { title: "Video 1", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689461/Videos/720p.h264-12_jpdx8o.mp4" },
+      { title: "Video 2", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689462/Videos/720p.h264-2_jjwins.mp4" },
+      { title: "Video 3", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689464/Videos/720p.h264-13_ufp663.mp4" },
+      { title: "Video 4", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689465/Videos/720p.h264-11_u5ktth.mp4" },
+      { title: "Video 5", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689472/Videos/720p.h264-5_1762685882178_eg5c6z.mp4" },
+      { title: "Video 6", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689473/Videos/720p.h264-1_1762685883425_zkgw7w.mp4" },
+      { title: "Video 7", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689476/Videos/720p.h264-1_1762686850598_czonno.mp4" },
+      { title: "Video 8", url: "https://res.cloudinary.com/dlmil40rf/video/upload/v1765689483/Videos/720p.h264-3_1762685882580_l9c613.mp4" }
+    ];
     /* ================= STATE ================= */
     const player = document.getElementById('videoPlayer');
     const container = document.getElementById('videoContainer');
@@ -156,6 +155,7 @@
     const nowPlaying = document.getElementById('nowPlaying');
     
     /* ================= FUNCTIONS ================= */
+    
     function loadVideos() {
       container.innerHTML = '';
       
@@ -164,17 +164,23 @@
         item.className = 'video-item';
         item.innerHTML = `<div class="video-title">${video.title}</div>`;
         
-        item.onclick = () => playVideo(index);
+        item.onclick = () => playVideo(index, true);
         container.appendChild(item);
       });
     }
     
-    function playVideo(index) {
+    function playVideo(index, updateUrl = false) {
       const video = videos[index];
+      
       player.src = video.url;
       downloadBtn.href = video.url;
       nowPlaying.textContent = `Now Playing: ${video.title}`;
       player.play();
+      
+      if (updateUrl) {
+        const encodedUrl = encodeURIComponent(video.url);
+        history.pushState({}, '', `?video=${encodedUrl}`);
+      }
     }
     
     function setView(type) {
@@ -184,18 +190,38 @@
     function sharePage() {
       const url = window.location.href;
       if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          url
-        });
+        navigator.share({ title: document.title, url });
       } else {
         navigator.clipboard.writeText(url);
         alert('Page link copied to clipboard');
       }
     }
     
+    /* ================= URL HANDLING ================= */
+    
+    function playFromUrlOrDefault() {
+      const params = new URLSearchParams(window.location.search);
+      const videoUrl = params.get('video');
+      
+      if (videoUrl) {
+        const decodedUrl = decodeURIComponent(videoUrl);
+        const index = videos.findIndex(v => v.url === decodedUrl);
+        
+        if (index !== -1) {
+          playVideo(index);
+          return;
+        }
+      }
+      
+      // fallback → play first video
+      if (videos.length > 0) {
+        playVideo(0);
+      }
+    }
+    
     /* ================= INIT ================= */
     loadVideos();
+    playFromUrlOrDefault();
   </script>
 </body>
 
